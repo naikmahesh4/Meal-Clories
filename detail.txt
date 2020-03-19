@@ -1,0 +1,972 @@
+Tracalorie Project (Using the Module Pattern):-
+ 
+Project Detail:-
+
+In this Project we build a meal and calorie tracker and we're going to use the JavaScript 
+
+module Patter for this and also going to use local storage so that we can persist the data 
+
+so that it stays after we we load the page or close the browser or whatever. So basically 
+
+have a few different controllers kind of three different module controllers,A storage 
+
+controller for local storage although that will be last thing. we have a item controller to 
+
+deal with actual data.The state will have a UI Controller to work with UI.
+----------------
+
+Creating the UI with MaterializeCSS:-
+
+We going to start on our application using the module pattern our track calorie app. we're 
+
+just going to start off by just creating the markup we're using materialise CSS for our UI 
+
+framework.
+
+We're going to need a couple of things to include here one of course is material CSS so 
+
+we will go "https://materializecss.com/getting-started.html", And next we going to font 
+
+awesome icons are not icons CDN because we want to include, we'll get it from this 
+
+bootstrap CDN "https://www.bootstrapcdn.com/fontawesome/". and we also we gonna 
+
+user the javascriptcdn and also jquery cdn 
+
+
+index.html:
+------
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" 
+
+href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-
+
+awesome.min.css" rel="stylesheet" integrity="sha384-
+
+wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE
+
++QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+  <title>TraCalorie | Meal & Calorie Tracker</title>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-wrapper blue">
+      <div class="container">
+        <a href="#" class="brand-logo center">Tracalorie</a>
+        <ul class="right">
+          <li><a href="#" class="clear btn blue lighten-3">Clear All</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <br>
+
+  <div class="container">
+    <!-- Form Card -->
+    <div class="card">
+      <div class="card-content">
+        <span class="card-title">Add a Meal / Food Item</span>
+        <form class="col">
+          <div class="row">
+            <div class="input-field col s6">
+              <input type="text" name="item-name" id="item-name" placeholder="Add 
+
+Item">
+              <label for="item-name">Meal</label>
+            </div>
+            <div class="input-field col s6">
+              <input type="text" name="item-calorie" id="item-calories" placeholder="Add 
+
+Calories">
+              <label for="item-calories">Calories</label>
+            </div>
+            <button class="add-btn btn blue darken-3"><i class="fa fa-plus">&nbsp;Add 
+
+Meal</i></button>
+            <!-- <button class="update-btn btn orange"><i class="fa fa-pencil-square-
+
+o">Update</i></button>
+            <button class="delete-btn btn red"><i class="fa fa-remove">Delete 
+
+Meal</i></button> -->
+            <button class="back-btn btn grey pull-right"><i class="fa fa-chevron-circle-
+
+left">Back</i></button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- Calorie Count -->
+    <h3 class="center-align">Total Calories : <span class="total-calories">0</span></h3>
+    <!--  Item-List -->
+    <ul id="item-list" class="collection">
+      <!-- <li class="collection-item" id="item-0">
+        <strong>Steak Dinner:</strong> <em>1200 calroies</em>
+        <a href="#" class="secondary-content"><i class="edit-item fa fa-pencil"></i></a>
+      </li>
+      <li class="collection-item" id="item-0">
+          <strong>Cookies :</strong> <em>700 calroies</em>
+          <a href="#" class="secondary-content"><i class="edit-item fa fa-pencil"></i></a>
+        </li>
+        <li class="collection-item" id="item-0">
+            <strong>yogurt :</strong> <em>1000 calroies</em>
+            <a href="#" class="secondary-content"><i class="edit-item fa fa-
+
+pencil"></i></a>
+          </li> -->
+    </ul> 
+  </div>
+
+ <script src="https://code.jquery.com/jquery-3.4.1.js"integrity="sha256-
+
+WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+ <script 
+
+src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script
+
+>
+  <script src="app.js"></script>
+</body>
+</html>
+
+here we are commenting some stuff becuz we had hard coded the for UI so we're going 
+
+to do dynamic all in javascript.
+
+-We're going to have a Storage Controller for local Storage which is going to happen till 
+
+the end.
+-We're all going to have an Item Controller for our local Data that have to do it. you 
+
+know the item and the calories.
+-We'll have our UI controller that has to do anything to do with the UI.you know 
+
+showing,hidding things,getting input.
+-We'll have our main app control of where everything will meet and also where we're 
+
+going to put our intial event listeners and we also have our  initialiser our nit function 
+
+there.
+
+//Storage Controller
+//Item Controller
+   //Item Constructor
+   const Item = function(id,name,calories){
+    this.id = id;  - so with any constructor we need to set thids store and then the property 
+
+to the property being passed.
+    this.name = name;
+    this.calories = calories;
+  //Data Structure / State
+  const data = {
+   items : [   -we're hard coded data 
+   {id=0,name: 'Steak Dinner',Calories: 300};
+   {id=1,name: 'Cookies',Calories: 500};
+   {id=2,name: 'Eggs',Calories: 600};     --.as we talked about in the module pattern this 
+
+stuff is private,This is not accessiable for instance from chrome, and we look over in 
+
+chrome ItemCtrl.data it shows TypeError: cannot read property 'data' of undefined. so if 
+
+we want to able to access this data which i actually do want to have a function to access 
+
+to testing out,we're ging to have to return. Ok whatever we return from the module is 
+
+what i going to be public.
+	 ],
+
+   currentItem:null,	- what i mean currentItem is when we go to update if i click the 
+
+update icon we're going to want that paticular item that meal item to be the current item 
+
+and then next we're going to get put up here in the form to be updated.
+
+   totalCalories: 0
+ 	}
+
+   //public methods
+
+   return {   -by return we can access the data in chrome.ItemCtrl.logData())
+     getItems:function(){  -create a pubilc method in our itemController called getitem.
+	return data.items;
+	      },
+       logData: function(){ -
+ 	return data;
+	},
+      addItem: function(name,claories){
+	//console.log(name, calories)
+	let ID;
+	//Create Id -- We need to generate id,so here we increment the ids (logic to 
+
+create the ids)
+	if(data.items.length > 0){
+	ID = data.items[data.items.length -1].id +1; -if greater than zero we want to 
+
+do is make id data.items nd then we want 'index to be length minus one' 
+	}else{
+	ID = 0;
+	}
+	//Calories  string to number
+	calories = parseInt(calories); - next we want new item we need to say new key 
+
+word new item and then pass in the data
+	//Create the new item
+	const newItem = new Item(ID,name.calories) - this call the constructor
+
+	//Add to items array
+	data.items.push(newItem);
+	
+	return newItem ; -we are return the newIte,bcuz remember we put it into 
+
+variable down below. (After entering new data in web nothng happened in UI nd it 
+
+shouldn't becuz we hven't done anything with UI what we have done is updating the data 
+
+structure. Now remember we have this logData function or method that we can check 
+
+that in console by typing itemCtrl.logData().so here we can the all the dat a update. )
+-Next we have add a new item to data Structure,so need to add it to the UI.in UICtrl
+	},
+ getTotalCalories : function(){  -we actually have to do is we have to loop through the 
+
+items and we have to add the calories.
+	let total = 0 ; -create a variable using let bcuz this will change and set to zero 
+
+by default.
+  //Loop through items and add Cals
+   data.items.forEach( function(){ -we can loop through items,So remember we can 
+
+access our data and we have our items array.
+	total += items.calories;
+});
+  //Set total Cal in data structure
+  data.totalCalories = total ;
+//Return total
+return data.totalCalories;  -Now we want to show in UI ,goto app Control
+	},
+
+  getItemById : function(id){
+-what we're going to do is we're going to loop through the items and match the ID.Now 
+
+we going to create a temporary variable called found using let and set it to null.
+ let  found = null;
+//Loop through the items
+data.items.forEach(function(item){
+if(item.id === id){
+ found = item;  -Next go to the itemUpdateSubmit and console to get item ,we get the 
+
+whole item.
+	}
+});
+
+return found;
+    },
+
+ setCurrentItem : function(item){
+data.currentItem = item;  - now the last step is when we click on edit button we need to 
+
+put the update,delete,back button on the ui.So lets go back to the app controller right 
+
+after where we set item current item say add item
+  },
+getCurrentItem : function(){
+ 
+return data.currentItem;  -we get the currentitem in fields so need to get update,delete 
+
+buttons.So,go back to our add item form in the controller.
+  },
+ updateItem : function(name, calories){  -which passes the name and calories
+   //Calories to number -first we want to do is turn calories to a number bcuz it's coming 
+
+from the form.
+ calories = parseInt(calories);
+
+-once we do that we're going to bascially do the same thing as found,well the same ID 
+
+that we're going to do something different within the forEach,but we need a variable 
+
+called found set it null,now we're going to loop through our items.
+
+  let found = null;
+
+data.items.forEach(function(){
+  if(item.id === data.currentItem.id){  -remember once we hit that edit button right there 
+
+that gets put into the current item. so if matches next
+
+  item.name = name;
+  item.calories = calories;
+  found = item;
+
+  }
+  });
+   return found;  - this will update in the data struture not in UI.we are returning and So 
+
+lets go back to item upate submit and it's getting put into this variable. Now we want to 
+
+do is bascially update the Ui.
+  },
+
+deleteItem : function(id){  -create a deleteItem which has a object function that takes 'id'.
+ 
+-We gonna do us little different we're going to first of all get the IDs and we going to do 
+
+this using 'map method'.So which is sort of like the forEach accepted return something so 
+
+lets say IDs equal say data dot items dot map.
+
+//Get ids
+  const ids = data.items.map(function(item){
+ return item.id;
+});
+ 
+//Get the Index - and then we want to get the index.
+
+const index = ids.indexof(id);
+And then we simply want to splice it out of the array.
+
+//Remove item
+data.item.splice(index, 1); - we wanna pass index and just wanna take one from the 
+
+index.
+- Now its not going to show in the UI but we can always use our logData method.so we 
+
+have deleted it from the data structure which is what we wanted. Now lets go back down 
+
+to item delete submit.
+  },
+clearAllItems : function(){
+  data.items = [ ] -this is easy that we gonna set data.items equal to empty array. after 
+
+when we look in UI nothing gonna happen,So we can check our log data and there's 
+
+ItemCtrl.logData() and nothing in the items array ,it works now we have to deal with the 
+
+UI,Next go the App controller in clearAllItemClick;
+   }
+	
+     }
+
+      })();
+
+//UI Controller
+const UICtrl = (function(items){
+    const UISelectors = {
+        itemList: '#item-list',
+        listItems: '#item-list li', -all the li's 
+        addBtn: '.add-btn',
+        updateBtn: '.update-btn',
+        deleteBtn: '.delete-btn',
+        backBtn :'.back-btn',
+        clearBtn : '.clear-btn',
+        itemNameInput : '#item-name',
+       itemCaloriesInput : '#item-calories',
+     totalCalories : '.total-calories' -we gonna back to showTotalCalories
+	}
+
+   return {
+    let html = ' ';
+
+   items.forEach(function(item){  --we're looping through those items and we're adding an 
+
+'li' to this or we pending an 'li' to this html variable through each iteration and then finally 
+
+sticking this in UI.
+      html +=  `
+	<li class="collection-item" id="item-${item.id}">
+        <strong>${item.name} :</strong> <em>${item.calories} Calories</em>
+        <a href="#" class="secondary-content"><i class="edit-item fa fa-pencil"></i></a>
+        </li>
+            `;
+     });
+   //Insert list Items
+    document.querySelector('UISelectors.itemList').innerHTML = html;
+      },
+    getSelectors : function(){  -we can't access the private modifiers, this getSelectors are 
+
+created,so we can access public modifiers
+     return UISelectors; 
+	},
+    getItemInput : function(){  -same as the getselector bcuz the modifiers
+         return {  - we want return an object with name and calories,Next how do we get 
+
+this forms so we have id's. Next we need to add to UI Selectors  
+	name : document.querySelector(UISelectors.itemNameInput).value ,
+	calories : document.querySelector(UISelectors.itemCaloriesInput).value
+	}
+	},
+   addListItem : function(item){ -now we want to create a list item element
+     //Show the List ()
+   document.querySelector(UISelectors.itemList).style.display = 'block';  --Next we want 
+
+know the total calories count in UI Page.so let's go to our main app Control or to goto 
+
+item add submit and i want to do before clear the input fields.
+
+        //Create li element
+    const li = document.createElement('li');
+     //Add Class
+    li.className = 'collection-item';
+   //Add ID
+  li.ID = `item-${item.id}`  -Now remember the ID is actually going to be dynamic its 
+
+going to be id of the item,We can access that becuz this is the item object which has the 
+
+ID,name and the Calories.so we gonna set this to template string.
+  //Add HTML
+  li.innerHTML = ` <strong>${item.name} :</strong> <em>${item.calories} 
+
+Calories</em>
+        <a href="#" class="secondary-content"><i class="edit-item fa fa-pencil"></i></a>`;
+   //Insert Item
+document.querySelector(UISelectors.itemList).insertAdjacentElement('beforeend', li) 
+	},
+-After add those items we need to clear the fields,go back to App Controller in 
+
+itemAddSubmit and clear fields.
+  
+  clearInput : function(){
+    document.querySelector(UISelector.itemNameInput).value = ' ';
+    document.querySelector(UISelector.itemCaloriesInput).value = ' ';
+	}
+
+-After reloading the web-page the data disappears becuz we haven't persisted the data 
+
+anywhere it's just in the local data structure.Later on we're going to add it to local storage 
+
+so that if we reload the app it's still there .
+
+-We have add a hardCoded data in the itemController, in console when we type 
+
+ItemCtrl.logData() we get last item as (Item { id:3,name:'dash',calories:'343'}),notice that 
+
+last item as Item bcuz that was actually created with the constructor.these are the items we 
+
+just object literals just pasted inside the Array.
+
+-we gonna comment out the hardCoded data and now lets see nothing is there in web-
+
+page so i want remove the below line in web-page when data is empty.even though there 
+
+is 'ul' list . So what we're going to do is in the UI controller.we're going to add a method 
+
+called 'Hide list'.
+
+  hideList : function(){
+    document.querySelector(UISelectors.ItemList).style.display = 'none'; -Next go to App 
+
+Controller and add a condition to the init.
+
+	},
+    showTotalCalories: function(totalCalories){
+      document.querySelector(UISelectors.totalCalories).textContent = totalCalories ; 
+         },
+     clearEditState: function(){
+        UICtrl.clearInput(); -before doing edit state we have to make sure that fields are 
+
+clear.
+Next the only reason we don't see the upate and delete right now is bcuz there are 
+
+commented out in the html.go and uncomment those so we can see it now
+ we need to add the buttons like upadate,delete,back.so go to UISelector and add the 
+
+delete and update button.
+  document.querySelector(UISelectors.updateBtn).style.display = 'none';
+  document.querySelector(UISelectors.deleteBtn).style.display = 'none';
+  document.querySelector(UISelectors.backBtn).style.display = 'none';
+  document.querySelector(UISelectors.addBtn).style.display = 'inline';
+-Save this and nothing gonna happen bcuz this function is just being created but it's not 
+
+called.we need to called in init. Next goto AppController and Actually we want this to be 
+
+want this to be the first thing called.
+
+      },
+ addItemToForm : function(){
+ document.querySelector(UISelectors.itemNameInput).value = ItemCtrl.getCurrentItem
+
+().name;
+
+document.querySelector(UISelectors.itemCaloriesInput).value = ItemCtrl.getCurrentItem
+
+().calories;
+
+UICtrl.showEditState(); -we have to create a showEditState,so go down clearEditState() 
+
+and copy those.
+  },  -rn we doesn't know what get current item is in the item controller
+
+showEditState: function(){
+ document.querySelector(UISelectors.updateBtn).style.display = 'inline';
+  document.querySelector(UISelectors.deleteBtn).style.display = 'inline';
+  document.querySelector(UISelectors.backBtn).style.display = 'inline';
+  document.querySelector(UISelectors.addBtn).style.display = 'none';
+
+} --Next we have update the item & calories,So we need to click on Update Button so 
+
+lets have the event listeners for the click of update and lets go to event listeneres which 
+
+are in our app Controller. 
+    },
+ updateListItem : function(item){
+  let listItems =  document.querySelectorAll(UISelector.listItems)  -create a 
+
+variablelistItems and we wanna get the list item from the DOMs,we want all the list items 
+
+so we need to go to UISelctors and create the all the list items and come and putting that 
+
+in a variable,Now this that gives us a node list and we need to loop through these nodes 
+
+and we can't use a forEach on a nodelist.So we need basically convert into an array.
+
+ //Turn Node list into array
+ listItems = Array.from(listItems);  -converting nodelist into Array which passing listItems
+
+ listItems.forEach(function(listItems){
+  const itemID = listItem.getAttribute('id'); -lets creata a variable itemID and we wanna 
+
+get 'id' Attribute.
+
+ if(itemID === `item-${item.id}`){
+  document.querySelector(`#${itemID}`).innerHTML = ` <strong>${item.name} 
+
+:</strong> <em>${item.calories} Calories</em>
+        <a href="#" class="secondary-content"><i class="edit-item fa fa-pencil"></i></a> 
+
+`;  --after updating the total calories doesn't gets Update so we have to do same 
+
+thing,when we added.So in itemAddSubmit we did the those two we got the total calories 
+
+and then we update the copy those two line and we'also going to clear the input in the edit 
+
+state. it actually calls the clear and so we don't need that separately.so lets grab these two 
+
+go down to our update and set in UI Control
+     }
+ });
+  },
+
+  deleteListItem : function(id){
+  const itemID = `#item-${id}`; 
+  const item = document.querySelector(itemID);  -create a variable item which is set it to 
+
+document.querySelector ,Next we want to clear and update the state
+
+item.remove(); 
+so now we want to clear the State and Update the total calories in UI.
+ //Get total Calories
+    const totalCalories = ItemCtrl.getTotalCalories();
+  //Add total Calories to UI -show total Calories to UI
+    UICtrl.showTotalCalories(totalCalories)
+UICtrl.clearEditState(); - to clear the fields in meal and the calories 
+
+-Next i want to do is the clear all Button,SO when we Click that everyThing should 
+
+disappear so lets Create an event listener for that. so we need to check in UISelectors 
+
+wheather the button is there ,if not check in HTML and come back to UI Selectors and 
+
+add the clearAllButton to UI Selector. and Next go to AddEventListeners and Create a 
+
+event listener for the clear All button.
+    },
+ 
+ removeItems : function(){
+let listItems = document.querySelectorAll(UISelector.listItems); -create a variable which is 
+
+set to document.querySelectorAll() just like we did in upate and we just grab those and 
+
+then we want to turn it into array.
+
+//Turn Node list into array
+listItems  = Array.from(listItems);
+
+listItems.forEach(function(item){
+  item.remove();  - this will clear all out.Next go to App Controller and update the calories 
+
+in clearAllItemsClick
+});
+  }
+
+})();
+
+//App Controller
+const App = (function(ItemCtrl,UIctrl){
+    console.log(ItemCtrl.logData());  - output:{items:Array     
+
+(3),currentItem:null,totalCalories:0} - Next we want to do in app control or just return 
+
+one function or one method and that's going to be the net.the main it's initializer for the 
+
+app anything that we need to run right away when the application loads.
+     -For instance we want to make sure that the state is clear that there is nothing in UI.
+ //load Event listeners
+  const loadEventListeners = function(){
+      //Get UI selectors
+     const UISelectors = UICtrl.getSelectors(); - so we can get access from UI Ctrl to App 
+
+Ctrl as the above.
+
+  //Add item Event
+    document.querySelcetor(UISelectors.addBtn).addEventListener
+
+('click',itemAddSubmit);
+     }
+
+  //Disable the submit on enter
+  document.addEventListener('keypress' , function(e){
+  if(e.keyCode === 13 || e.which === 13){  -we can check for what key was hit.So we 
+
+can do that by looking at the key code property.key code is equal to 13 which is 
+
+enter,Now some more older browsers don't support the key code OR which is equal to 
+
+13.
+  e.preventDefault();
+  return false;  -so we bascially just disabling the enter key. next go baack to our 
+
+upateitemsubmit object function.
+   }
+});
+
+ //Edit Icon click Event
+document.querySelector(UISelectors.itemList).addEventListener('click',itemEditClick);  
+
+-we said earlier that we have to use some event delegation we can't target the edit click or 
+
+edit item button directly.So we're going to target the item list.(So say UISelectors.itemlist) 
+
+same as itemaddsubmit as itemupdatesubmit
+
+//Update Item Event
+document.querySelector(UISelectors.updateBtn).addEventListeners
+
+('click',itemUpdateSubmit); -this is gonna do the update.next down and create itemupdate 
+
+submit.
+
+//Back button Event
+document.querySelector(UISelectors.backBtn).addEventListeners('click', 
+
+UICtrl.clearEditState); - we haven't to create a new Function to call,we can do UI 
+
+controller.clearEditState. Next Move on the Delete event so go to Event Listeners and 
+
+create a event listener on delete button the below code indicate the delete event.
+
+//Delete item Event
+document.querySelector(UISelector.deleteBtn).addEventListener
+
+('click',itemDeleteSubmit); -create a function on itemDeleteSubmit in App Controller
+
+//Clear item Event
+document.querySelector(UISelector.clearBtn).addEventListener
+
+('click',clearAllItemsClick); -create a function on clearAllItemClick in app Controller
+
+   //Add item submit
+   const itemAddSubmit = function(e){
+   //console.log('add'); - if we click in webpage nothing gonna show to in console bcuz this 
+
+loadEventListeners function is not being called anywhere.So this is the actually going to 
+
+called inside of init.so go through to init and call it.
+    when we submit the form we must make sure that there is something in the 
+
+field.Inorder to check to make sure that there's something here we need to get the 
+
+input.so we're going to leave that to UI Control or method called get item input.
+
+  //Get form input from UI Controller
+const input = UiCtrl.getItemInput();  -goto the UI Controller.
+//console.log(input);  - output shows the result in console.
+//Check for name and calories input
+  if(input.name !== ' ' && input.calories !== ' '){
+      //Add item
+    const newItem = ItemCtrl.addItem(input.name,input.calories); -we need to create a 
+
+variable bcuz we need later to update UI,Next go and create a addItem in Item 
+
+Controller.this takes input as identifier.
+
+this is item add submit function and remember we put it new item into a variable 
+
+(newItem variable),Now we want to Add item to UI.
+   //Add item to UI List
+  UICtrl.addListItem(newItem); -we haven't created yet we have to go up here to the UI 
+
+Controller and actually create it (addListItem).
+  //Get total Calories
+ const totalCalories = ItemCtrl.getTotalCalories(); -we haven't created yet the 
+
+getTotalCalories,so go to Item Control and create a object getTotalCalories.
+  //Add total Calories to UI -show total Calories to UI
+ UICtrl.showTotalCalories(totalCalories); - we pass total Calories and next goto UI 
+
+controller
+
+--Now We're going to want these two things to happen when the app is initialized.so right 
+
+now it's always going to be zero to start with becuz we're not using our local storage.just 
+
+grab/copy these two lines right there and lets put inside of init.
+
+  //Clear fields -to clear the fields
+ UICtrl.clearInput();  -Now go to UIController and add the clearInput function for 
+
+clearing the data after the submit
+	}
+   e.preventDefault();
+    }
+
+ //click edit Item
+ const itemEditClick = function(e){
+ //console.log('test'); -this results the test works in all every where in the field,so we want 
+
+to target on edit icon only. 
+
+ if(e.target.classList.contains('edit-item')){
+  //console.log('edit-item') -this works on edit icon only.  
+--we want to do is add this item or whatever item we click to the current item.I remember 
+
+up here in our data structure we have a currentItem which is initially set to Null
+
+(currentItem = null). so thats the goal we want to fill that with the item that we click.First 
+
+thing we're going to do is get the list item ID.
+
+//Get list item id(item-0,item-1,item-2)
+const listId = e.target.parentNode.parentNode.id; 
+ -when i say parentNode what i mean is we're clicking on the edit icon <i class='edit-item 
+
+fa fa-pencil'><i> so the parent node of this i tag is a tag <a href="#" class="secondary-
+
+content"></a> ,Does we have id in a tag no,So we need parent of that which is the 'li' 
+
+which has the ID that we need which is this item.so we don't need the whole li,we just 
+
+need id so dot id at end.
+//console.log(listId);
+-this above console give the list id not the actual ID of the item which is 0 and 1 it gets 
+
+the  list ID which is in the markup.So now we want to do is we need to get just the 
+
+regular ID 0,1,2.So we need to break into an array
+
+// Break into an array  - we're going to basically split it at the dash and set into an array so 
+
+that one array is item and another is number.we can do by using split method.
+const listIdArr = listId.split('-');
+//console.log(listIdArr);  -output : ["item", "0"]
+
+//Get Actual Id number
+const id = parseInt(listIdArr[1]);  - we want number so need parseInt
+
+All right so now that we have the ID we want to actually get the entire object the entire 
+
+item.
+
+//Get item
+const itemToEdit = ItemCtrl.getItemById(id); - Next go to Item Controll and create a 
+
+variable getItemById. 
+   //console.log(itemToEdit);
+
+//Set current Item 
+ItemCtrl.setCurrentItem(itemToEdit); - next goto item controller and create a object 
+
+setCurrentItem and has a function.
+
+  //Add item to form
+ UICtrl.addItemToForm();  -we don't even have to pass anything in becuz it's in that 
+
+current item.so we can access that from anywhere.So,lets go the UIController, let's go 
+
+and create a object addItemToForm
+
+  }
+  e.preventDefault();
+   }
+
+  const itemUpdateSubmit = function(e){
+  //console.log('update');  -Now one thing i want to fix before that when i click enter,it just 
+
+hits the Add button and re-adds it.so we don't wanna do that.So, we're going to disable 
+
+then enter,when we filled this form we hit Enter,we don't want anything to happen bcuz 
+
+we want to manually click on whatever button we want becuz there more than one button 
+
+here.
+-To do that we gonna back to add event listeners and we're going to disable submit on 
+
+enter under the Add item event.
+
+//Get item input
+ const input = UICtrl.getItemInput(); -create a input and is equal to UICtrl.getItenmInput
+//update Item
+const updateItem = ItemCtrl.updateItem(input.name,input.calories); -now lets go and add 
+
+updateItem to our Controller. next go to app controller
+
+//Update UI.
+UICtrl.updateListItem(updateItem);  --go to UI Controller and create a updateListItem
+
+//Get total Calories  - to get the total calories so we grab this two lines to update the total 
+
+calories in the UI.
+const totalCalories = ItemCtrl.getTotalCalories();
+//Add total calories to UI
+UICtrl.showTotalCalories(totalCalories);
+//clear After Update  - after updating the meal and calories we need to clear the fields so 
+
+use the below state line.
+UICtrl.clearEditState();
+
+--Next we gonna Delete the meal and get back button. all we need to do is clear the all 
+
+and state out. We actually already have a control controller method that does that clear at 
+
+the stage. What we'll do is go into our main App controll or we just starting to get big 
+
+CGI. go to add Event Listeners.
+ 
+  e.preventDefault();
+   }
+
+ //Delete Button Event  
+  const itemDeleteSubmit = function(e){ -create a variable itemDeleteSubmit which takes 
+
+an function.
+  //console.log('delete);  - to check wheather the button works or not.
+ - what we going to do is i'm going to get the 'id' that we need from the current item.
+//Get Current item
+ const currentItem = ItemCtrl.getCurrentItem();  -create a currentItem which is set to 
+
+ItemController already we have a method called Get current item. Next we want to delete 
+
+from the data Structure.
+
+//Delete from data Struture
+ItemCtrl.deleteItem(currentItem.id); - from ItemController.deleteItem and pass 
+
+currentItem.id , Next go to the item Controller and create a delete item object.  
+
+//Delete from UI  -After deleting the from data Stucture we need to delete in UI also.
+UICtrl.deleteListItem(currentItem.id);  -we gonna take UI control dot deleteListItem 
+
+method and pass in currentItem.id , Next we go to UI COntroller and Create a variable 
+
+deleteListItem which is set to a function which takes the id
+
+
+  e.preventDefault();
+  }
+
+  const clearAllItemsClick = function(){
+  - we're going to call the from the Item control or we're going to have a function called 
+
+clear all items,So lets say delete all items from data Struture.
+//Delete all items from data structure
+  ItemCtrl.clearAllItems(); -next go to Item Control and create a variable clearAllItems();
+// Remove from UI
+UICtrl.removeItems(); - Next move to the UI controller and create a object function 
+
+removeItems();
+
+  //Get total Calories  -to update the calories we need this need these two lines. and next 
+
+we need to hide the list bcuz right now if i put something in here and we could clear all 
+
+the list and hide the line.
+    const totalCalories = ItemCtrl.getTotalCalories();
+  //Add total Calories to UI -show total Calories to UI
+      UICtrl.showTotalCalories(totalCalories);
+  //Hide UL -to hide the line when there no list in UI page.
+   UICtrl.hideList();  - Already we have this method before in UICtrl.hideList();
+
+--In Next we gonna Look over the Local Storage.
+
+  }
+
+ //public Methods
+ return {
+   init: function(){
+   //console.log('Initializing the App.......');
+  //Clear edit stated / set initial set
+  UICtrl.clearEditState();
+
+-after adding the calories we need to edit since there button is not here when we start up 
+
+the application its something that's was just added after the DOMs loaded.We have to use 
+
+Event delegation so we can't target ,but this directly we have to get something some kind 
+
+of the parent element and then do a check inside to make sure that it's this button that 
+
+we're clicking. So Next go to our Event Listeners or Load Event Listeners function.in 
+
+AppController do the edit item.
+
+    // Fetch items from data structure
+   const Items = ItemCtrl.getItems(); -we're getting items from the item controller we're 
+
+putting into a variable then we're calling populateItemList from UI controller or where we 
+
+passing those items in and then populate item.
+
+    console.log(Items);   output:-Initializing the App.......
+		     (3) [{…}, {…}, {…}]
+	-The number UI Controller is what going to take care of anything to do with 
+
+the user interface and populating this list right in UI.this is UI with our items that's a 
+
+function of the controller.
+
+  //Check if any item 
+  if(items.length === 0){   - this condition when there item is empty don't show the line in 
+
+UI page or else show the line
+   UICtrl.hideList();
+    }else {
+    //Populate list with items
+      UICtrl.populateItemList(Items);
+    }
+	
+    //Get total Calories
+      const totalCalories = ItemCtrl.getTotalCalories();
+    //Add total Calories to UI -show total Calories to UI
+      UICtrl.showTotalCalories(totalCalories)
+--Next we Movie on to Edit state Basically when we click on edit icons to edit an item we 
+
+want to hide the addItem button,delete button also.Now i want to go to UI Controller an 
+
+Create clearEditState object which states a function.
+    
+     // Load event listener
+      loadEventListeners();
+      }
+   }
+  
+})(ItemCtrl,UIctrl);
+
+//Initialize App
+App.init();
+
+-Note: Another very Important thing that this init is goiing to call from the Item Controller 
+
+a method called get items which is going to get all of these items.And then we're going to 
+
+use the UI controller to populate the list.All right so all this modules are going to work 
+
+very closely together.
